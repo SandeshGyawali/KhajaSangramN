@@ -49,6 +49,7 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+
                 fname_txt = fname.getText().toString();
                 lname_txt = lname.getText().toString();
                 mail_id_user = email.getText().toString();
