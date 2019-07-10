@@ -105,7 +105,7 @@ public class RestaurantDetails extends AppCompatActivity {
     }
 
     public void getrestaurant_details()
-    {
+        {
         reference = FirebaseDatabase.getInstance().getReference("Restaurants");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

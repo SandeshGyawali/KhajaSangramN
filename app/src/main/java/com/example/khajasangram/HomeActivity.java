@@ -7,6 +7,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.example.khajasangram.Classes.UserdetailsClass;
 import com.example.khajasangram.utilPackage.location.LocationUtil;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -34,10 +36,31 @@ public class HomeActivity extends AppCompatActivity implements LocationUtil.Loca
     SharedPreferences.Editor editor;
     UserdetailsClass userdetailsClass;
 
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    return true;
+                case R.id.navigation_favorite:
+                    return true;
+                case R.id.navigation_profile:
+                    Intent intent = new Intent(HomeActivity.this,user_profile.class);
+                    startActivity(intent);
+            }
+            return false;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+//        Add these code in every activity as bottom nav switches between activities
+        BottomNavigationView navView = findViewById(R.id.bottom_nav);
+        navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         signout = findViewById(R.id.signout_home);
         oatscafe = findViewById(R.id.restrnt1);

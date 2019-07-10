@@ -16,12 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".user_profile"></activity>
         <activity
-            android:name=".HomepageActivity"
-            android:label="@string/title_activity_homepage"></activity>
-        <activity android:name=".RestaurantDetails"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:name=".HomePage"
+            android:label="@string/title_activity_home_page" />
+        <activity android:name=".RestaurantDetails" />
         <activity android:name=".RestaurantlistActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".SignupActivity" />
