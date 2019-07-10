@@ -71,7 +71,7 @@ public class RestaurantDetails extends AppCompatActivity {
                         address.setText(daddress);
                         contact.setText(dcontact);
 
-                        setrestaurant_picture();
+                        setrestaurant_picture(id);
                     }
                 }
             }
@@ -83,18 +83,21 @@ public class RestaurantDetails extends AppCompatActivity {
         });
     }
 
-    public void setrestaurant_picture()
+    public void setrestaurant_picture(String id)
     {
         reference_img = FirebaseDatabase.getInstance().getReference("Images");
         reference_img.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String id = snapshot.child("rid").getValue(String.class);
-                    String imgpath = snapshot.child("imgpath").getValue(String.class);
 
-                    Picasso.get().load(imgpath).into(imgview);
-                    break;
+                    if(intent_id.equals(id)) {
+                        String id = snapshot.child("rid").getValue(String.class);
+                        String imgpath = snapshot.child("imgpath").getValue(String.class);
+
+                        Picasso.get().load(imgpath).into(imgview);
+                        break;
+                    }
                 }
             }
 
