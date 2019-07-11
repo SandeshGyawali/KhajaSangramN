@@ -111,7 +111,7 @@ public class HomeActivity extends AppCompatActivity implements LocationUtil.Loca
         String uid = mAuth.getCurrentUser().getUid();
 
         Toast.makeText(this, "uid= "+uid, Toast.LENGTH_SHORT).show();
-        userdetailsClass = new UserdetailsClass(editpreferencesignup.getString("firstname",null),editpreferencesignup.getString("lastname",null),editpreferencesignup.getString("email",null),lat_string, lng_String);
+        userdetailsClass = new UserdetailsClass(uid,editpreferencesignup.getString("firstname",null),editpreferencesignup.getString("lastname",null),editpreferencesignup.getString("email",null),lat_string, lng_String);
         reference.child(uid).setValue(userdetailsClass);
     }
 }
