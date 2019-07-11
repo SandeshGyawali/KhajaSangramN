@@ -88,11 +88,6 @@
         android:layout_height="wrap_content"
         android:weightSum="2">
 
-
-
-
-
-
     </LinearLayout>
 
 

@@ -91,5 +91,9 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
+//        public void loginActivity() {
+//            Intent intentLogin = new Intent(SignupActivity.this,MainActivity.class);
+//            startActivity(intentLogin);
+//        }
         }
 }
