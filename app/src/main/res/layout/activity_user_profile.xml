@@ -17,13 +17,71 @@
         android:layout_marginTop="100dp"/>
 
     <TextView
+        android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Gaurab Panthee"
         android:layout_below="@+id/profile_image"
         android:layout_centerHorizontal="true"
         android:textSize="30sp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        />
 
+    <ImageView
+        android:id="@+id/edit_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/user_name"
+        android:layout_marginLeft="26dp"
+        android:layout_marginBottom="3dp"
+        android:layout_toRightOf="@+id/user_name"
+        app:srcCompat="@drawable/ic_mode_edit_black_24dp"
+        android:onClick="onClickOpenEditUser"/>
 
+    <TextView
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_name"
+        android:text="Settings"
+        android:textSize="25dp"
+        android:drawableLeft="@drawable/ic_settings_black_24dp"
+        android:drawablePadding="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:onClick="onClickOpenSettings"
+        />
+
+    <TextView
+        android:id="@+id/about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/settings"
+        android:text="About"
+        android:textSize="25dp"
+        android:drawableLeft="@drawable/ic_info_black_24dp"
+        android:drawablePadding="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/about"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/btn"
+        android:text="Logout"
+        android:textColor="#FFF" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu"
+        android:layout_alignParentBottom="true">
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 </RelativeLayout>

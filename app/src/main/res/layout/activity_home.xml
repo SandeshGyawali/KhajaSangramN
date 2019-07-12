@@ -7,13 +7,6 @@
     android:orientation="vertical"
     tools:context=".HomeActivity">
 
-    <TextView
-        android:layout_marginTop="18dp"
-        android:textSize="18sp"
-        android:text="Hello World!!"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_location_picker"
         android:layout_width="match_parent"
@@ -35,13 +28,6 @@
         android:id="@+id/restrnt1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/signout_home"
-        android:text="Sign Out"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
 
     <include
 
