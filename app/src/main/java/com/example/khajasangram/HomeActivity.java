@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class HomeActivity extends AppCompatActivity implements LocationUtil.LocationListener{
-    Button signout, oatscafe;
+    Button  oatscafe;
     private FirebaseAuth mAuth;
     private LocationUtil mLocationUtil;
     private DatabaseReference reference;
@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity implements LocationUtil.Loca
         BottomNavigationView navView = findViewById(R.id.bottom_nav);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        signout = findViewById(R.id.signout_home);
+
         oatscafe = findViewById(R.id.restrnt1);
 
         editpreferencesignup = getSharedPreferences("UserDataSignup",0);
@@ -91,13 +91,6 @@ public class HomeActivity extends AppCompatActivity implements LocationUtil.Loca
         mLocationUtil = new LocationUtil(HomeActivity.this);
         mLocationUtil.fetchApproximateLocation(this);
 
-        signout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              mAuth.signOut();
-              finish();
-            }
-        });
     }
 
 
