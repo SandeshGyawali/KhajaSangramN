@@ -76,9 +76,13 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
                 //restaurantDetails.displayrestaurant_details(restaurantClass);
 
                 Intent i= new Intent(view.getContext(),RestaurantDetails.class);
+                Bundle extras = new Bundle();
                 //view.getContext().startActivity(new
                   //      Intent(view.getContext(),RestaurantDetails.class));
-                i.putExtra("id",id.get(position));
+                extras.putString("id",id.get(position));
+                extras.putString("contact",contact.get(position));
+                i.putExtras(extras);
+                //i.putExtra("id",id.get(position));
                 view.getContext().startActivity(i);
 
 

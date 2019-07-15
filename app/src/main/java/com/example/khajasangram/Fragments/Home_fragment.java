@@ -1,9 +1,4 @@
-package com.example.khajasangram;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.example.khajasangram.Fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,9 +8,20 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.khajasangram.Adaptors.RestaurantAdaptor;
+import com.example.khajasangram.R;
+import com.example.khajasangram.RestaurantlistActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,12 +30,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class RestaurantlistActivity extends AppCompatActivity {
+public class Home_fragment extends Fragment {
 
-    RecyclerView recyclerView;
-    ArrayList<String> dname ;
-    ArrayList<String> daddress ;
-    ArrayList<String> dcontact ;
+    ArrayList<String> dname;
+    ArrayList<String> daddress;
+    ArrayList<String> dcontact;
     ArrayList<String> dcreated_date;
     ArrayList<String> ddistance;
     ArrayList<String> did;
@@ -37,20 +42,24 @@ public class RestaurantlistActivity extends AppCompatActivity {
     RestaurantAdaptor adaptor;
     private SharedPreferences sharedPreferences;
 
-
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurantlist);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        sharedPreferences = getSharedPreferences("UserDataHome",0);
 
-        if(!isConnected(RestaurantlistActivity.this)) buildDialog(RestaurantlistActivity.this).show();
+        View rootView = inflater.inflate(R.layout.home_fragment, null);
+        // 1. get a reference to recyclerView
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
 
-        else{
-            setContentView(R.layout.activity_restaurantlist);
-            recyclerView = (RecyclerView)findViewById(R.id.myrecylerView);
+        // 2. set layoutManger
+
+        sharedPreferences = getActivity().getSharedPreferences("UserDataHome", 0);
+
+        if (!isConnected(getContext())) buildDialog(getContext()).show();
+
+        else {
+            //setContentView(R.layout.activity_restaurantlist);
+            //recyclerView = (RecyclerView)findViewById(R.id.myrecylerView);
 
             dname = new ArrayList<>();
             daddress = new ArrayList<>();
@@ -65,8 +74,7 @@ public class RestaurantlistActivity extends AppCompatActivity {
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot snapshot : dataSnapshot.getChildren())
-                    {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String name = snapshot.child("name").getValue(String.class);
                         String address = snapshot.child("address").getValue(String.class);
 
@@ -79,10 +87,10 @@ public class RestaurantlistActivity extends AppCompatActivity {
                         String lat = snapshot.child("latitude").getValue(String.class);
                         String lng = snapshot.child("longitude").getValue(String.class);
 
-                        //Toast.makeText(RestaurantlistActivity.this, "contact = "+contact, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(), "contact = "+contact, Toast.LENGTH_SHORT).show();
 
-                        String user_lat = sharedPreferences.getString("latitude",null);
-                        String user_lng = sharedPreferences.getString("longitude",null);
+                        String user_lat = sharedPreferences.getString("latitude", null);
+                        String user_lng = sharedPreferences.getString("longitude", null);
 
 
                         dname.add(name);
@@ -93,28 +101,26 @@ public class RestaurantlistActivity extends AppCompatActivity {
 
                         Location loc1 = new Location("");
                         loc1.setLatitude(Double.valueOf(user_lat));
-                        loc1.setLongitude(Double.valueOf(user_lng) );
+                        loc1.setLongitude(Double.valueOf(user_lng));
 
                         Location loc2 = new Location("");
                         loc2.setLatitude(Double.valueOf(lat));
                         loc2.setLongitude(Double.valueOf(lng));
 
                         float distanceInMeters = loc1.distanceTo(loc2);
-                        float distanceinkm = (distanceInMeters/1000);
+                        float distanceinkm = (distanceInMeters / 1000);
                         ddistance.add(String.valueOf(distanceinkm));
 
-                        adaptor = new RestaurantAdaptor(recyclerView,RestaurantlistActivity.this,dname,daddress,dcontact,did,dcreated_date,ddistance);
+                        adaptor = new RestaurantAdaptor(recyclerView, getContext(), dname, daddress, dcontact, did, dcreated_date, ddistance);
                         recyclerView.setAdapter(adaptor);
 
                         recyclerView.setHasFixedSize(true);
                         // use a linear layout manager
-                        LinearLayoutManager mLayoutManager = new LinearLayoutManager(RestaurantlistActivity.this);
+                        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                         recyclerView.setLayoutManager(mLayoutManager);
 
 
                     }
-
-
                 }
 
                 @Override
@@ -123,13 +129,14 @@ public class RestaurantlistActivity extends AppCompatActivity {
                 }
             });
 
+
+            // this is data for recycler view
+
+
         }
 
-
+        return rootView;
     }
-
-
-
 
     public boolean isConnected(Context context) {
 
@@ -140,7 +147,8 @@ public class RestaurantlistActivity extends AppCompatActivity {
             android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            if ((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting()))
+                return true;
             else return false;
         } else
 
@@ -158,11 +166,10 @@ public class RestaurantlistActivity extends AppCompatActivity {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                finish();
+                getActivity().finish();
             }
         });
 
         return builder;
     }
-
 }

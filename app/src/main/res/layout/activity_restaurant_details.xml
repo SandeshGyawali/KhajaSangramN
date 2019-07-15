@@ -6,6 +6,17 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".RestaurantDetails">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark"/>
+    </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -43,6 +54,7 @@
 
             <TextView
                 android:text="Description"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -52,12 +64,13 @@
                 android:layout_height="wrap_content" />
 
             <LinearLayout
+                android:padding="6dp"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/menu_layout"
+                    android:id="@+id/menu"
                     android:gravity="center"
                     android:clickable="true"
                     android:layout_weight="1"
@@ -77,8 +90,8 @@
                     android:layout_height="24dp"/>
 
                 <LinearLayout
-                    android:id="@+id/location_layout"
                     android:gravity="center"
+                    android:id="@+id/res_location"
                     android:clickable="true"
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
@@ -86,7 +99,6 @@
 
                     <TextView
                         android:textSize="18sp"
-                        android:id="@+id/res_location"
                         android:text="Location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -98,7 +110,7 @@
                     android:layout_height="24dp"/>
 
                 <LinearLayout
-                    android:id="@+id/contact_layout"
+                    android:id="@+id/res_contact"
                     android:gravity="center"
                     android:clickable="true"
                     android:layout_weight="1"
@@ -107,7 +119,6 @@
 
                     <TextView
                         android:textSize="18sp"
-                        android:id="@+id/res_contact"
                         android:text="Contact"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -117,14 +128,62 @@
             </LinearLayout>
 
             <LinearLayout
+                android:padding="8dp"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textStyle="bold"
+                    android:text="Rate this restaurant:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+                <androidx.appcompat.widget.AppCompatRatingBar
+                    android:layout_width="wrap_content"
+                    android:progressTint="@color/yellow"
+                    android:progressBackgroundTint="@color/black"
+                    android:id="@+id/rating"
+                    android:numStars="5"
+                    android:stepSize="1"
+                    android:layout_height="wrap_content"
+                    />
+                <Button
+                    android:id="@+id/rating_submit_btn"
+                    android:textAllCaps="false"
+                    android:text="Submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
             <TextView
                 android:textStyle="bold"
                 android:text="User Reviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+                <TextView
+                    android:paddingTop="8dp"
+                    android:text="Be the first one to rate it!!!"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/reviewrecycler"
+                    >
+
+                </androidx.recyclerview.widget.RecyclerView>
 
             </LinearLayout>
 

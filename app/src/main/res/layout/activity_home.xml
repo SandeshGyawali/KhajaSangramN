@@ -35,6 +35,14 @@
         android:id="@+id/restrnt1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+     <Button
+        android:textAllCaps="false"
+        android:layout_marginTop="8dp"
+        android:text="View User Profile"
+        android:id="@+id/user_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
     <Button
         android:id="@+id/signout_home"
