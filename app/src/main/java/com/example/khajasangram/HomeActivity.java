@@ -19,7 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class HomeActivity extends AppCompatActivity implements LocationUtil.LocationListener{
-    Button signout, oatscafe;
+    Button signout, oatscafe, upf;
     private FirebaseAuth mAuth;
     private LocationUtil mLocationUtil;
     private DatabaseReference reference;
@@ -41,6 +41,7 @@ public class HomeActivity extends AppCompatActivity implements LocationUtil.Loca
 
         signout = findViewById(R.id.signout_home);
         oatscafe = findViewById(R.id.restrnt1);
+        upf = findViewById(R.id.user_profile);
 
         editpreferencesignup = getSharedPreferences("UserDataSignup",0);
 
@@ -50,6 +51,13 @@ public class HomeActivity extends AppCompatActivity implements LocationUtil.Loca
         reference = FirebaseDatabase.getInstance().getReference("Users");
 
         mAuth = FirebaseAuth.getInstance();
+
+        upf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this, UserprofileActivity.class));
+            }
+        });
 
         oatscafe.setOnClickListener(new View.OnClickListener() {
             @Override
