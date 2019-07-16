@@ -89,6 +89,11 @@ public class RestaurantDetails extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String rat_val = dataSnapshot.child("stars").getValue(String.class);
+                if(rat_val == null)
+                {
+                    String temp_rat_val = "0";
+                    ratingBar.setRating(Float.parseFloat(temp_rat_val));     }
+                else
                 ratingBar.setRating(Float.parseFloat(rat_val));
             }
 

@@ -55,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 if (mAuth.getCurrentUser().isEmailVerified()) {
-                                    Toast.makeText(MainActivity.this, "New Activity will open here", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                                    startActivity(new Intent(MainActivity.this, HomepageActivity.class));
                                 } else if (!(mAuth.getCurrentUser().isEmailVerified())) {
                                     Toast.makeText(MainActivity.this, "Please verify your email.", Toast.LENGTH_SHORT).show();
                                 }
