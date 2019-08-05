@@ -1,6 +1,8 @@
 package com.example.khajasangram.Adaptors;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +31,17 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
     Context context;
      ArrayList<String> list;
      ArrayList<String> submenuitem_list ;
-     ArrayList<String> submenuitem_pricelist ;
+     ArrayList<String> submenuitem_pricelist;
+    ArrayList<String> submenuitem_list1 ;
+     ArrayList<String> submenuitem_pricelist1 ;
      DatabaseReference reference;
      String id;
     int submenu_item_index ;
+    int submenu_item_index1 ;
     SubMenuItemAdaptor subMenuItemAdaptor;
+    DatabaseReference reference1;
+    LinearLayout linearLayout;
+
 
 
 
@@ -57,10 +65,15 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
     public void onBindViewHolder(@NonNull MenuItemViewHolder holder, int position) {
 
         holder.item_name.setText(list.get(position));
+        linearLayout = holder.menu_item;
+
         holder.menu_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                linearLayout.setBackgroundResource(R.drawable.rec_box_rounded_corner);
+                //holder.menu_item.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+                holder.menu_item.setBackgroundResource(R.drawable.menu_item_pressed);
+                linearLayout = holder.menu_item;
                 reference = FirebaseDatabase.getInstance().getReference("Menu").child(id).child(list.get(position));
 
                 //when new item is pressed the string array should be initialized
@@ -105,6 +118,7 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
         });
 
     }
+
 
     @Override
     public int getItemCount() {

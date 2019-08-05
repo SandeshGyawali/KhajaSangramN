@@ -103,7 +103,7 @@ public class RestaurantlistActivity extends AppCompatActivity {
                         float distanceinkm = (distanceInMeters/1000);
                         ddistance.add(String.valueOf(distanceinkm));
 
-                        adaptor = new RestaurantAdaptor(recyclerView,RestaurantlistActivity.this,dname,daddress,dcontact,did,dcreated_date,ddistance);
+                        adaptor = new RestaurantAdaptor(recyclerView,RestaurantlistActivity.this,dname,daddress,dcontact,did,ddistance);
                         recyclerView.setAdapter(adaptor);
 
                         recyclerView.setHasFixedSize(true);

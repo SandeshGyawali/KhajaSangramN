@@ -32,9 +32,8 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
     ArrayList<String> address = new ArrayList<>();
     ArrayList<String> contact = new ArrayList<>();
     ArrayList<String> id = new ArrayList<>();
-    ArrayList<String> created_date = new ArrayList<>();
 
-    public RestaurantAdaptor(RecyclerView recyclerView, Context context, ArrayList<String> name, ArrayList<String> address,ArrayList<String> contact, ArrayList<String> id, ArrayList<String> created_date,ArrayList<String> distance) {
+    public RestaurantAdaptor(RecyclerView recyclerView, Context context, ArrayList<String> name, ArrayList<String> address,ArrayList<String> contact, ArrayList<String> id,ArrayList<String> distance) {
         this.recyclerView = recyclerView;
         this.context = context;
         this.name = name;
@@ -42,7 +41,7 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
         this.id = id;
         this.contact = contact;
         this.distance = distance;
-        this.created_date = created_date;
+        //this.created_date = created_date;
 
         restaurantDetails = new RestaurantDetails();
     }
@@ -63,7 +62,7 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
         holder.r_contact.setText(contact.get(position));
         holder.r_distance.setText(distance.get(position));
 
-        restaurantClass = new RestaurantClass(id.get(position), name.get(position),address.get(position),contact.get(position),created_date.get(position));
+        restaurantClass = new RestaurantClass(id.get(position), name.get(position),address.get(position),contact.get(position));
         //Toast.makeText(context, "name= "+restaurantClass.getR_name(), Toast.LENGTH_SHORT).show();
 
         holder.llayout.setOnClickListener(new View.OnClickListener() {

@@ -39,7 +39,7 @@ public class RestaurantDetails extends AppCompatActivity {
     TextView name,address,contact,description;
     LinearLayout menu,location,phone;
     Button button;
-    RatingBar ratingBar;
+    RatingBar ratingBar, avg_rating;
     Toolbar toolbar;
 
     DatabaseReference reference, reference_description;
@@ -76,11 +76,39 @@ public class RestaurantDetails extends AppCompatActivity {
 
         button = findViewById(R.id.rating_submit_btn);
         ratingBar = findViewById(R.id.rating);
+        avg_rating = findViewById(R.id.avg_rating);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         intent_id = extras.getString("id");
         intent_contact = extras.getString("contact");
+
+
+        DatabaseReference avg_rating_reference;
+        final Double[] d = {0.0};
+        final Double[] final_val = new Double[1];
+        avg_rating_reference = FirebaseDatabase.getInstance().getReference("Rating").child(intent_id);
+        avg_rating_reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren())
+                {
+                    Double star = Double.parseDouble(snapshot.child("stars").getValue(String.class));
+                    d[0] = d[0] + star;
+                }
+                final_val[0] = d[0]/dataSnapshot.getChildrenCount();
+                Float f = final_val[0].floatValue();
+                avg_rating.setRating(f);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+
 
 
         DatabaseReference rev_curr_value;
