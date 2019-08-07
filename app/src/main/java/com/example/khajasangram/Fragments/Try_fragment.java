@@ -40,20 +40,26 @@ public class Try_fragment extends Fragment {
     ArrayList<String> dcontact;
     ArrayList<String> ddistance;
     ArrayList<String> did;
+    ArrayList<String> drating;
+
 
     ContentValues contentValues;
 
     String user_latitude, user_longitude;
 
-    Databasehelper databasehelper;
+    Databasehelper databasehelper,databasehelper1;
+    ;
 
     RestaurantAdaptor adaptor;
 
     Location loc1 = new Location("");
+    Double value;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //databasehelper1 = new Databasehelper(getContext());
+        //databasehelper1.delete_content();
 
         View view = inflater.inflate(R.layout.home_fragment, null);
 
@@ -88,22 +94,60 @@ public class Try_fragment extends Fragment {
             dcontact = new ArrayList<>();
             ddistance = new ArrayList<>();
             did = new ArrayList<>();
+            drating = new ArrayList<>();
 
             reference_restaurant = FirebaseDatabase.getInstance().getReference("Restaurants");
             reference_restaurant.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        DatabaseReference review, image;
+                        review = FirebaseDatabase.getInstance().getReference("Rating");
+                        image = FirebaseDatabase.getInstance().getReference("Images");
+
                         contentValues = new ContentValues();
                         String name = snapshot.child("name").getValue(String.class);
                         String address = snapshot.child("address").getValue(String.class);
                         String contact = snapshot.child("contact").getValue(String.class);
 
-
                         String id = snapshot.child("id").getValue(String.class);
                         String lat = snapshot.child("latitude").getValue(String.class);
 
                         String lng = snapshot.child("longitude").getValue(String.class);
+                        final Double[] final_rating_value = new Double[1];
+
+                        review.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Double rating_value=0.0;
+                                for(DataSnapshot snapshot : dataSnapshot.getChildren())
+                                {
+                                    Double star = Double.parseDouble(snapshot.child("stars").getValue(String.class));
+                                    rating_value = rating_value + star;
+                                }
+                                if(dataSnapshot.getChildrenCount() == 0)
+                                {
+                                     final_rating_value[0] = 0.0;
+                                     value = final_rating_value[0];
+
+                                }
+                                else {
+                                    Double d = rating_value / dataSnapshot.getChildrenCount();
+                                     final_rating_value[0] = d;
+                                    value = final_rating_value[0];
+
+                                }
+
+                                }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        //Toast.makeText(getContext(), "rating= " +value, Toast.LENGTH_SHORT).show();
+
+                        drating.add(String.valueOf(final_rating_value[0]));
 
                         dname.add(name);
 
@@ -121,14 +165,18 @@ public class Try_fragment extends Fragment {
                         float distanceinkm = (distanceInMeters / 1000);
                         ddistance.add(String.valueOf(distanceinkm));
 
+                        contentValues.put("distance", String.valueOf(distanceinkm));
                         contentValues.put("id", id);
                         contentValues.put("name", name);
                         contentValues.put("address", address);
                         contentValues.put("contact", contact);
                         contentValues.put("latitude", lat);
                         contentValues.put("longitude", lng);
-                        contentValues.put("distance", String.valueOf(distanceinkm));
+
+                        contentValues.put("rating", String.valueOf(final_rating_value[0]));
+
                         databasehelper.populate_2kmtable(contentValues);
+                        Toast.makeText(getContext(),"final value= "+ final_rating_value[0],Toast.LENGTH_SHORT).show();
 
                         adaptor = new RestaurantAdaptor(recyclerView, getContext(), dname, daddress, dcontact, did, ddistance);
                         recyclerView.setAdapter(adaptor);
@@ -137,6 +185,7 @@ public class Try_fragment extends Fragment {
                         // use a linear layout manager
                         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                         recyclerView.setLayoutManager(mLayoutManager);
+
 
                     }
                 }

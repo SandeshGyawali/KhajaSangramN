@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -50,7 +52,8 @@ public class Notification_fragment extends Fragment {
     ArrayList<String> contact;
     ArrayList<String> latitude;
     ArrayList<String> longitude;
-    ArrayList<String> distance;
+    ArrayList<String> ddistance;
+    ArrayList<String> rating;
 
     @Nullable
     @Override
@@ -103,6 +106,16 @@ public class Notification_fragment extends Fragment {
         name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                namee = new ArrayList<>();
+                id = new ArrayList<>();
+                address = new ArrayList<>();
+                contact = new ArrayList<>();
+                latitude = new ArrayList<>();
+                longitude = new ArrayList<>();
+                ddistance = new ArrayList<>();
+                rating = new ArrayList<>();
+
                 nearby.setBackgroundResource(R.drawable.rec_box_rounded_corner);
                 place.setBackgroundResource(R.drawable.rec_box_rounded_corner);
                 name.setBackgroundResource(R.drawable.menu_item_pressed);
@@ -110,7 +123,115 @@ public class Notification_fragment extends Fragment {
                 searchby_name_place.setVisibility(View.VISIBLE);
                 nearby_alt_layout.setVisibility(View.INVISIBLE);
 
+
                 container1.removeAllViews();
+
+                search_icon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatabaseReference reference, reference_image;
+
+                        nearby_alt_layout.setVisibility(View.VISIBLE);
+
+                        container1.removeAllViews();
+
+                        String restaurant_name = search_txt.getText().toString();
+                        nearby_alt_txt.setText("Result for: "+restaurant_name);
+
+                        ArrayList<Restaurant_SQLite> info = databasehelper.twokmrestaurantname_list((restaurant_name));
+                        Restaurant_SQLite restaurant_sqLite;
+
+                        for(int i=0;i<info.size();i++)
+                        {
+                            restaurant_sqLite = info.get(i);
+                            View view1 = LayoutInflater.from(getContext()).inflate(R.layout.restaurant_layout,null);
+                            view1.setPadding(6,6,6,6);
+                            TextView res_name,res_address,res_contact,distance;
+                            RatingBar ratingBar;
+                            ImageView img;
+
+                            ratingBar = view1.findViewById(R.id.restaurant_rating_bar);
+                            res_name = view1.findViewById(R.id.res_name);
+                            res_address = view1.findViewById(R.id.res_address);
+                            res_contact = view1.findViewById(R.id.res_contact);
+                            distance = view1.findViewById(R.id.distance);
+                            img = view1.findViewById(R.id.img_restaurant);
+
+                            namee.add(restaurant_sqLite.name);
+                            address.add(restaurant_sqLite.address);
+                            id.add(restaurant_sqLite.id);
+                            contact.add(restaurant_sqLite.contact);
+                            latitude.add(restaurant_sqLite.latitude);
+                            longitude.add(restaurant_sqLite.longitude);
+                            ddistance.add(restaurant_sqLite.distance);
+
+                            final Double[] rating_sum = {0.0};
+                            final Double[] rating_sum_final = new Double[1];
+                            reference = FirebaseDatabase.getInstance().getReference("Rating").child(restaurant_sqLite.id);
+                            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                   for(DataSnapshot snapshot : dataSnapshot.getChildren())
+                                    {
+                                        Double stars = Double.parseDouble(snapshot.child("stars").getValue(String.class));
+                                        rating_sum[0] = rating_sum[0] + stars;
+                                    }
+                                    rating_sum_final[0] = rating_sum[0]/dataSnapshot.getChildrenCount();
+                                    Float f = rating_sum_final[0].floatValue();
+                                    ratingBar.setRating(f);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                            //float f = Float.valueOf(restaurant_sqLite.rating);
+                            //rating.add( f);
+                            reference_image = FirebaseDatabase.getInstance().getReference("Images").child(restaurant_sqLite.id);
+                            reference_image.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String imgpath = dataSnapshot.child("imgpath").getValue(String.class);
+                                    Picasso.get().load(imgpath).into(img);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+                            res_name.setText(restaurant_sqLite.name);
+                            res_address.setText(restaurant_sqLite.address);
+                            res_contact.setText(restaurant_sqLite.contact);
+                            distance.setText(restaurant_sqLite.distance);
+
+                            Restaurant_SQLite finalRestaurant_sqLite = restaurant_sqLite;
+                            view1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent i = new Intent(getContext(), RestaurantDetails.class);
+                                    Bundle extras = new Bundle();
+                                    //view.getContext().startActivity(new
+                                    //      Intent(view.getContext(),RestaurantDetails.class));
+                                    extras.putString("id", finalRestaurant_sqLite.id);
+                                    extras.putString("contact",finalRestaurant_sqLite.contact);
+                                    i.putExtras(extras);
+                                    //i.putExtra("id",id.get(position));
+                                    view.getContext().startActivity(i);
+                                }
+                            });
+
+                            container1.addView(view1);
+
+
+                        }
+
+
+                    }
+                });
             }
         });
 
@@ -125,7 +246,7 @@ public class Notification_fragment extends Fragment {
                 contact = new ArrayList<>();
                 latitude = new ArrayList<>();
                 longitude = new ArrayList<>();
-                distance = new ArrayList<>();
+                ddistance = new ArrayList<>();
 
                 name.setBackgroundResource(R.drawable.rec_box_rounded_corner);
                 nearby.setBackgroundResource(R.drawable.rec_box_rounded_corner);
@@ -139,6 +260,7 @@ public class Notification_fragment extends Fragment {
                 search_icon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        DatabaseReference reference, reference_image;
 
                         nearby_alt_layout.setVisibility(View.VISIBLE);
 
@@ -147,14 +269,48 @@ public class Notification_fragment extends Fragment {
                         String placename = search_txt.getText().toString();
                         nearby_alt_txt.setText("Result for: "+placename);
 
+
                         ArrayList<Restaurant_SQLite> info = databasehelper.twokmrestaurant_list((placename));
                         Restaurant_SQLite restaurant_sqLite;
 
                         for(int i=0;i<info.size();i++)
                         {
                             restaurant_sqLite = info.get(i);
-                            View view1 = LayoutInflater.from(getContext()).inflate(R.layout.restaurant_list_layout,null);
+                            View view1 = LayoutInflater.from(getContext()).inflate(R.layout.restaurant_layout,null);
                             view1.setPadding(6,6,6,6);
+
+                            TextView res_name,res_address,res_contact,distance;
+                            RatingBar ratingBar;
+                            ImageView img;
+
+                            ratingBar = view1.findViewById(R.id.restaurant_rating_bar);
+                            res_name = view1.findViewById(R.id.res_name);
+                            res_address = view1.findViewById(R.id.res_address);
+                            res_contact = view1.findViewById(R.id.res_contact);
+                            distance = view1.findViewById(R.id.distance);
+                            img = view1.findViewById(R.id.img_restaurant);
+
+                            final Double[] rating_sum = {0.0};
+                            final Double[] rating_sum_final = new Double[1];
+                            reference = FirebaseDatabase.getInstance().getReference("Rating").child(restaurant_sqLite.id);
+                            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot snapshot : dataSnapshot.getChildren())
+                                    {
+                                        Double stars = Double.parseDouble(snapshot.child("stars").getValue(String.class));
+                                        rating_sum[0] = rating_sum[0] + stars;
+                                    }
+                                    rating_sum_final[0] = rating_sum[0]/dataSnapshot.getChildrenCount();
+                                    Float f = rating_sum_final[0].floatValue();
+                                    ratingBar.setRating(f);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
 
                             namee.add(restaurant_sqLite.name);
                             address.add(restaurant_sqLite.address);
@@ -162,13 +318,24 @@ public class Notification_fragment extends Fragment {
                             contact.add(restaurant_sqLite.contact);
                             latitude.add(restaurant_sqLite.latitude);
                             longitude.add(restaurant_sqLite.longitude);
-                            distance.add(restaurant_sqLite.distance);
+                            ddistance.add(restaurant_sqLite.distance);
+//                            float f = Float.valueOf(restaurant_sqLite.rating);
+                            //rating.add( f);
+                            reference_image = FirebaseDatabase.getInstance().getReference("Images").child(restaurant_sqLite.id);
+                            reference_image.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String imgpath = dataSnapshot.child("imgpath").getValue(String.class);
+                                    Picasso.get().load(imgpath).into(img);
 
-                            TextView res_name,res_address,res_contact,distance;
-                            res_name = view1.findViewById(R.id.res_name);
-                            res_address = view1.findViewById(R.id.res_address);
-                            res_contact = view1.findViewById(R.id.res_contact);
-                            distance = view1.findViewById(R.id.distance);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
 
                             res_name.setText(restaurant_sqLite.name);
                             res_address.setText(restaurant_sqLite.address);
@@ -251,6 +418,7 @@ public class Notification_fragment extends Fragment {
 
     }
     private void display_nearby_restaurant() {
+        DatabaseReference reference, reference_image;
 
         namee = new ArrayList<>();
         id = new ArrayList<>();
@@ -258,7 +426,8 @@ public class Notification_fragment extends Fragment {
         contact = new ArrayList<>();
         latitude = new ArrayList<>();
         longitude = new ArrayList<>();
-        distance = new ArrayList<>();
+        ddistance = new ArrayList<>();
+        rating = new ArrayList<>();
 
         //value is getting rounded-off to the upper limit always i.e 1.88 is stored as 1
         ArrayList<Restaurant_SQLite> info = databasehelper.twokmrestaurant_list((value));
@@ -266,8 +435,20 @@ public class Notification_fragment extends Fragment {
         for(int i=0;i<info.size();i++)
         {
             restaurant_sqLite = info.get(i);
-            View view1 = LayoutInflater.from(getContext()).inflate(R.layout.restaurant_list_layout,null);
-            view1.setPadding(6,6,6,6);
+            View view1 = LayoutInflater.from(getContext()).inflate(R.layout.restaurant_layout,null);
+            //view1.setPadding(6,6,6,6);
+
+            TextView res_name,res_address,res_contact,distance;
+            RatingBar ratingBar;
+            ImageView img;
+
+            ratingBar = view1.findViewById(R.id.restaurant_rating_bar);
+            res_name = view1.findViewById(R.id.res_name);
+            res_address = view1.findViewById(R.id.res_address);
+            res_contact = view1.findViewById(R.id.res_contact);
+            distance = view1.findViewById(R.id.distance);
+            img = view1.findViewById(R.id.img_restaurant);
+
 
             namee.add(restaurant_sqLite.name);
             address.add(restaurant_sqLite.address);
@@ -275,18 +456,51 @@ public class Notification_fragment extends Fragment {
             contact.add(restaurant_sqLite.contact);
             latitude.add(restaurant_sqLite.latitude);
             longitude.add(restaurant_sqLite.longitude);
-            distance.add(restaurant_sqLite.distance);
+            ddistance.add(restaurant_sqLite.distance);
+            //float f = Float.valueOf(restaurant_sqLite.rating);
+            //rating.add( f);
 
-            TextView res_name,res_address,res_contact,distance;
-            res_name = view1.findViewById(R.id.res_name);
-            res_address = view1.findViewById(R.id.res_address);
-            res_contact = view1.findViewById(R.id.res_contact);
-            distance = view1.findViewById(R.id.distance);
+            final Double[] rating_sum = {0.0};
+            final Double[] rating_sum_final = new Double[1];
+            reference = FirebaseDatabase.getInstance().getReference("Rating").child(restaurant_sqLite.id);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren())
+                    {
+                        Double stars = Double.parseDouble(snapshot.child("stars").getValue(String.class));
+                        rating_sum[0] = rating_sum[0] + stars;
+                    }
+                    rating_sum_final[0] = rating_sum[0]/dataSnapshot.getChildrenCount();
+                    Float f = rating_sum_final[0].floatValue();
+                    ratingBar.setRating(f);
+                }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            reference_image = FirebaseDatabase.getInstance().getReference("Images").child(restaurant_sqLite.id);
+            reference_image.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String imgpath = dataSnapshot.child("imgpath").getValue(String.class);
+                    Picasso.get().load(imgpath).into(img);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
             res_name.setText(restaurant_sqLite.name);
             res_address.setText(restaurant_sqLite.address);
             res_contact.setText(restaurant_sqLite.contact);
             distance.setText(restaurant_sqLite.distance);
+            //ratingBar.setRating(f);
 
             Restaurant_SQLite finalRestaurant_sqLite = restaurant_sqLite;
             view1.setOnClickListener(new View.OnClickListener() {

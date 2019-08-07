@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import com.example.khajasangram.Classes.UserdetailsClass;
 import com.example.khajasangram.Fragments.Dashboard_fragment;
-import com.example.khajasangram.Fragments.Home_fragment;
+//import com.example.khajasangram.Fragments.Home_fragment;
 import com.example.khajasangram.Fragments.Notification_fragment;
 import com.example.khajasangram.Fragments.Search_fragment;
 import com.example.khajasangram.Fragments.Try_fragment;
@@ -158,7 +158,7 @@ public class HomepageActivity extends AppCompatActivity implements BottomNavigat
         super.onBackPressed();
 
         Databasehelper databasehelper = new Databasehelper(this);
-        databasehelper.drop_twokmtable();
+        databasehelper.delete_content();
         dialogbuilder(HomepageActivity.this);
     }
 

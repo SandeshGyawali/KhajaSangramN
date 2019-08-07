@@ -15,23 +15,12 @@ public class Databasehelper extends SQLiteOpenHelper {
 
     static int version = 1;
 
-    String create2kmtable = "CREATE TABLE if not exists `twokmtable` (\n" +
-            "\t`id`\tTEXT,\n" +
-            "\t`name`\tTEXT,\n" +
-            "\t`address`\tTEXT,\n" +
-            "\t`contact`\tTEXT,\n" +
-            "\t`latitude`\tTEXT,\n" +
-            "\t`longitude`\tTEXT,\n" +
-            "\t`distance`\tTEXT\n" +
-            ")";
-
-    String createplacetable = "CREATE TABLE if not exists`place_table` ( `id` TEXT, `name` TEXT, `address` TEXT, `distance` TEXT, `contact` TEXT, `latitude` TEXT, `longitude` TEXT )";
+    String create2kmtable = "CREATE TABLE if not exists\"twokmtable\"( `id` TEXT, `name` TEXT, `address` TEXT, `contact` TEXT, `latitude` TEXT, `longitude` TEXT, `distance` TEXT, `rating` TEXT, `image` BLOB )";
 
     public Databasehelper(Context context) {
         super(context, name, null, version);
 
         getWritableDatabase().execSQL(create2kmtable);
-        getWritableDatabase().execSQL(createplacetable);
     }
 
     @Override
@@ -52,6 +41,11 @@ public class Databasehelper extends SQLiteOpenHelper {
     {
         String delete = "drop table `twokmtable`";
         getWritableDatabase().execSQL(delete);
+    }
+    public void delete_content()
+    {
+        String query = "delete from twokmtable";
+        getWritableDatabase().execSQL(query);
     }
 
     public ArrayList<Restaurant_SQLite> twokmrestaurant_list()
@@ -95,6 +89,7 @@ public class Databasehelper extends SQLiteOpenHelper {
             restaurant_sqLite.latitude = c.getString(c.getColumnIndex("latitude"));
             restaurant_sqLite.longitude = c.getString(c.getColumnIndex("longitude"));
             restaurant_sqLite.distance = c.getString(c.getColumnIndex("distance"));
+            restaurant_sqLite.rating = (c.getString(c.getColumnIndex("rating")));
 
             list.add(restaurant_sqLite);
         }
@@ -119,6 +114,32 @@ public class Databasehelper extends SQLiteOpenHelper {
             restaurant_sqLite.latitude = c.getString(c.getColumnIndex("latitude"));
             restaurant_sqLite.longitude = c.getString(c.getColumnIndex("longitude"));
             restaurant_sqLite.distance = c.getString(c.getColumnIndex("distance"));
+            restaurant_sqLite.rating = (c.getString(c.getColumnIndex("rating")));
+
+            list.add(restaurant_sqLite);
+        }
+        c.close();
+        return list;
+
+    }
+    public ArrayList<Restaurant_SQLite> twokmrestaurantname_list(String name)
+    {
+        String query = "select distinct * from twokmtable where name ="+"'"+name+"'"+ "order by distance";
+        Cursor c = getReadableDatabase().rawQuery(query,null);
+
+        ArrayList<Restaurant_SQLite> list = new ArrayList<>();
+
+        while(c.moveToNext())
+        {
+            Restaurant_SQLite restaurant_sqLite = new Restaurant_SQLite();
+            restaurant_sqLite.id = c.getString(c.getColumnIndex("id"));
+            restaurant_sqLite.name = c.getString(c.getColumnIndex("name"));
+            restaurant_sqLite.address = c.getString(c.getColumnIndex("contact"));
+            restaurant_sqLite.contact = c.getString(c.getColumnIndex("address"));
+            restaurant_sqLite.latitude = c.getString(c.getColumnIndex("latitude"));
+            restaurant_sqLite.longitude = c.getString(c.getColumnIndex("longitude"));
+            restaurant_sqLite.distance = c.getString(c.getColumnIndex("distance"));
+            restaurant_sqLite.rating = (c.getString(c.getColumnIndex("rating")));
 
             list.add(restaurant_sqLite);
         }

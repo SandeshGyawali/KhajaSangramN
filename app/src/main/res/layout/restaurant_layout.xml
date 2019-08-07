@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/rec_box_rounded_corner"
+    android:layout_height="wrap_content"
+    android:id="@+id/linearlayout"
+    android:layout_margin="10dp"
+    >
+
+
+    <ImageView
+        android:layout_weight="1"
+        android:id="@+id/img_restaurant"
+        android:layout_width="191dp"
+        android:layout_height="120dp"
+        android:src="@mipmap/ic_launcher" />
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <TextView
+        android:padding="4dp"
+        android:id="@+id/res_name"
+        android:text="Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+        <TextView
+            android:padding="4dp"
+            android:layout_marginTop="4dp"
+            android:text="address"
+            android:id="@+id/res_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_marginTop="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RatingBar
+                android:id="@+id/restaurant_rating_bar"
+                android:progressTint="@color/yellow"
+                android:progressBackgroundTint="@color/black"
+                style="@style/Base.Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+
+                />
+
+            <TextView
+
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:text="1.3 km"/>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:padding="4dp"
+            android:layout_marginTop="4dp"
+            android:id="@+id/res_contact"
+            android:text="contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</LinearLayout>

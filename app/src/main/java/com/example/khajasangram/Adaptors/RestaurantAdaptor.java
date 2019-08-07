@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.khajasangram.Classes.RestaurantClass;
 import com.example.khajasangram.R;
 import com.example.khajasangram.RestaurantDetails;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -32,8 +40,10 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
     ArrayList<String> address = new ArrayList<>();
     ArrayList<String> contact = new ArrayList<>();
     ArrayList<String> id = new ArrayList<>();
+    ArrayList<String> value = new ArrayList<>();
+    DatabaseReference review, reference_img;
 
-    public RestaurantAdaptor(RecyclerView recyclerView, Context context, ArrayList<String> name, ArrayList<String> address,ArrayList<String> contact, ArrayList<String> id,ArrayList<String> distance) {
+    public RestaurantAdaptor(RecyclerView recyclerView, Context context, ArrayList<String> name, ArrayList<String> address,ArrayList<String> contact, ArrayList<String> id,ArrayList<String> distance ) {
         this.recyclerView = recyclerView;
         this.context = context;
         this.name = name;
@@ -50,7 +60,7 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
     @Override
     public RestaurantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.restaurant_list_layout,parent,false);
+        View view = layoutInflater.inflate(R.layout.restaurant_layout,parent,false);
         return new RestaurantViewHolder(view);
     }
 
@@ -61,7 +71,42 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
         holder.r_address.setText(address.get(position));
         holder.r_contact.setText(contact.get(position));
         holder.r_distance.setText(distance.get(position));
+        final Double[] rating_sum = {0.0};
+        final Double[] rating_sum_final = new Double[1];
+        review = FirebaseDatabase.getInstance().getReference("Rating").child(id.get(position));
+        review.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Double stars = Double.parseDouble(snapshot.child("stars").getValue(String.class));
+                    rating_sum[0] = rating_sum[0] + stars;
+                }
+                rating_sum_final[0] = rating_sum[0]/dataSnapshot.getChildrenCount();
+                Float f = rating_sum_final[0].floatValue();
+                holder.ratingBar.setRating(f);
+                }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        //Float f = Float.valueOf(value.get(position));
+        //holder.ratingBar.setRating(f);
+
+        reference_img = FirebaseDatabase.getInstance().getReference("Images").child(id.get(position));
+        reference_img.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String imgpath = dataSnapshot.child("imgpath").getValue(String.class);
+                Picasso.get().load(imgpath).into(holder.imageView);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         restaurantClass = new RestaurantClass(id.get(position), name.get(position),address.get(position),contact.get(position));
         //Toast.makeText(context, "name= "+restaurantClass.getR_name(), Toast.LENGTH_SHORT).show();
 
@@ -102,6 +147,8 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
         TextView r_distance;
         TextView r_created_date;
         LinearLayout llayout;
+        RatingBar ratingBar;
+        ImageView imageView;
 
 
         public RestaurantViewHolder(@NonNull View itemView) {
@@ -112,6 +159,8 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
             r_contact = itemView.findViewById(R.id.res_contact);
             r_distance = itemView.findViewById(R.id.distance);
             llayout = itemView.findViewById(R.id.linearlayout);
+            ratingBar = itemView.findViewById(R.id.restaurant_rating_bar);
+            imageView = itemView.findViewById(R.id.img_restaurant);
 
         }
     }

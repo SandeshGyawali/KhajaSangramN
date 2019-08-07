@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.khajasangram.Adaptors.RestaurantAdaptor;
 import com.example.khajasangram.Classes.Restaurant_SQLite;
 import com.example.khajasangram.R;
-import com.example.khajasangram.RestaurantlistActivity;
+//import com.example.khajasangram.RestaurantlistActivity;
 import com.example.khajasangram.SQLite.Databasehelper;
 
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ public class Search_fragment extends Fragment {
     ArrayList<String> latitude;
     ArrayList<String> longitude;
     ArrayList<String> distance;
+    ArrayList<Float> rating;
     SeekBar seekBar;
     TextView seekbartxt;
     String radius;
@@ -101,6 +102,7 @@ public class Search_fragment extends Fragment {
                 latitude = new ArrayList<>();
                 longitude = new ArrayList<>();
                 distance = new ArrayList<>();
+                rating = new ArrayList<>();
 
 
                 //value is getting rounded-off to the upper limit always i.e 1.88 is stored as 1
@@ -118,14 +120,16 @@ public class Search_fragment extends Fragment {
                     latitude.add(restaurant_sqLite.latitude);
                     longitude.add(restaurant_sqLite.longitude);
                     distance.add(restaurant_sqLite.distance);
+                    float f = Float.valueOf(restaurant_sqLite.rating);
+                    rating.add( f);
                 }
-                restaurantAdaptor = new RestaurantAdaptor(recyclerView,getContext(),name, address,contact,id,distance);
-                recyclerView.setAdapter(restaurantAdaptor);
-
-                recyclerView.setHasFixedSize(true);
-
-                LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-                recyclerView.setLayoutManager(mLayoutManager);
+//                restaurantAdaptor = new RestaurantAdaptor(recyclerView,getContext(),name, address,contact,id,distance,rating);
+//                recyclerView.setAdapter(restaurantAdaptor);
+//
+//                recyclerView.setHasFixedSize(true);
+//
+//                LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+//                recyclerView.setLayoutManager(mLayoutManager);
             }
         });
 

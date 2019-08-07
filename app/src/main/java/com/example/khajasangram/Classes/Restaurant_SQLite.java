@@ -8,6 +8,6 @@ public class Restaurant_SQLite {
     public String latitude;
     public String longitude;
     public String distance;
-
+    public String rating;
 
 }
