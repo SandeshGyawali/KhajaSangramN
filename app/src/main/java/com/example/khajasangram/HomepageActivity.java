@@ -41,7 +41,7 @@ public class HomepageActivity extends AppCompatActivity implements BottomNavigat
     Boolean loc_checker= false;
     SharedPreferences uidpreference;
     SharedPreferences.Editor editor1;
-
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,7 @@ public class HomepageActivity extends AppCompatActivity implements BottomNavigat
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
+
 
         mLocationUtil = new LocationUtil(HomepageActivity.this);
         mLocationUtil.fetchApproximateLocation(this);

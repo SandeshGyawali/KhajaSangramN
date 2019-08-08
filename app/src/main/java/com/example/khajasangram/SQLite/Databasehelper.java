@@ -3,6 +3,7 @@ package com.example.khajasangram.SQLite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -14,12 +15,13 @@ public class Databasehelper extends SQLiteOpenHelper {
     static String name = "NearbyRestaurants";
 
     static int version = 1;
+    Context context;
 
     String create2kmtable = "CREATE TABLE if not exists\"twokmtable\"( `id` TEXT, `name` TEXT, `address` TEXT, `contact` TEXT, `latitude` TEXT, `longitude` TEXT, `distance` TEXT, `rating` TEXT, `image` BLOB )";
 
     public Databasehelper(Context context) {
         super(context, name, null, version);
-
+        this.context = context;
         getWritableDatabase().execSQL(create2kmtable);
     }
 
@@ -31,6 +33,13 @@ public class Databasehelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+    }
+
+    public long row_count()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Long value = DatabaseUtils.longForQuery(db, "Select count(*) from twokmtable", null);
+        return value;
     }
 
     public void populate_2kmtable(ContentValues cv)

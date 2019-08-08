@@ -419,6 +419,7 @@ public class Notification_fragment extends Fragment {
     }
     private void display_nearby_restaurant() {
         DatabaseReference reference, reference_image;
+        Databasehelper databasehelper9 = new Databasehelper(getContext());
 
         namee = new ArrayList<>();
         id = new ArrayList<>();
@@ -430,7 +431,9 @@ public class Notification_fragment extends Fragment {
         rating = new ArrayList<>();
 
         //value is getting rounded-off to the upper limit always i.e 1.88 is stored as 1
-        ArrayList<Restaurant_SQLite> info = databasehelper.twokmrestaurant_list((value));
+        ArrayList<Restaurant_SQLite> info = databasehelper9.twokmrestaurant_list((value));
+        Toast.makeText(getContext(), "value = "+value, Toast.LENGTH_SHORT).show();
+
         Restaurant_SQLite restaurant_sqLite;
         for(int i=0;i<info.size();i++)
         {
@@ -450,7 +453,7 @@ public class Notification_fragment extends Fragment {
             img = view1.findViewById(R.id.img_restaurant);
 
 
-            namee.add(restaurant_sqLite.name);
+           /* namee.add(restaurant_sqLite.name);
             address.add(restaurant_sqLite.address);
             id.add(restaurant_sqLite.id);
             contact.add(restaurant_sqLite.contact);
@@ -458,7 +461,7 @@ public class Notification_fragment extends Fragment {
             longitude.add(restaurant_sqLite.longitude);
             ddistance.add(restaurant_sqLite.distance);
             //float f = Float.valueOf(restaurant_sqLite.rating);
-            //rating.add( f);
+            //rating.add( f);*/
 
             final Double[] rating_sum = {0.0};
             final Double[] rating_sum_final = new Double[1];
@@ -517,7 +520,6 @@ public class Notification_fragment extends Fragment {
                     view.getContext().startActivity(i);
                 }
             });
-
             container1.addView(view1);
 
 
