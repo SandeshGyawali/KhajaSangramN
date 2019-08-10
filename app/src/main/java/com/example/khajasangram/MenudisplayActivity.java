@@ -64,6 +64,7 @@ public class MenudisplayActivity extends AppCompatActivity {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Toast.makeText(MenudisplayActivity.this, "count= "+dataSnapshot.getChildrenCount(), Toast.LENGTH_SHORT).show();
                 for(int i=0; i< dataSnapshot.getChildrenCount();i++)
                 {
                     String name = dataSnapshot.child("name"+foodlist_index).getValue(String.class);

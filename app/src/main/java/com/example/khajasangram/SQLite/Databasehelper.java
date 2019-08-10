@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.khajasangram.Classes.Restaurant_SQLite;
+import com.example.khajasangram.Classes.Restaurant_SQLite_comparision;
 
 import java.util.ArrayList;
 
@@ -18,11 +19,13 @@ public class Databasehelper extends SQLiteOpenHelper {
     Context context;
 
     String create2kmtable = "CREATE TABLE if not exists\"twokmtable\"( `id` TEXT, `name` TEXT, `address` TEXT, `contact` TEXT, `latitude` TEXT, `longitude` TEXT, `distance` TEXT, `rating` TEXT, `image` BLOB )";
+    String createcomparisiotable = "CREATE TABLE if not exists\"comparisiontable\"( `id` TEXT, `name` TEXT, `address` TEXT, `contact` TEXT, `latitude` TEXT, `longitude` TEXT, `distance` TEXT, `rating` TEXT, `image` BLOB )";
 
     public Databasehelper(Context context) {
         super(context, name, null, version);
         this.context = context;
         getWritableDatabase().execSQL(create2kmtable);
+        getWritableDatabase().execSQL(createcomparisiotable);
     }
 
     @Override
@@ -41,10 +44,20 @@ public class Databasehelper extends SQLiteOpenHelper {
         Long value = DatabaseUtils.longForQuery(db, "Select count(*) from twokmtable", null);
         return value;
     }
+    public long comparetable_rowcount()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Long value = DatabaseUtils.longForQuery(db, "Select count(*) from comparisiontable",null);
+        return value;
+    }
 
     public void populate_2kmtable(ContentValues cv)
     {
         getWritableDatabase().insert("twokmtable","",cv);
+    }
+    public void populate_comparisiontable(ContentValues cv)
+    {
+        getWritableDatabase().insert("comparisiontable","",cv);
     }
     public void drop_twokmtable()
     {
@@ -55,6 +68,35 @@ public class Databasehelper extends SQLiteOpenHelper {
     {
         String query = "delete from twokmtable";
         getWritableDatabase().execSQL(query);
+    }
+    public void delete_content_compare()
+    {
+        String query = "delete from comparisiontable";
+        getWritableDatabase().execSQL(query);
+    }
+
+    public ArrayList<Restaurant_SQLite_comparision> comparision_rating()
+    {
+        String q = "Select * from comparisiontable order by rating desc";
+        Cursor c = getReadableDatabase().rawQuery(q,null);
+
+        ArrayList<Restaurant_SQLite_comparision> list  = new ArrayList<>();
+
+        while (c.moveToNext())
+        {
+            Restaurant_SQLite_comparision obj = new Restaurant_SQLite_comparision();
+            obj.id = c.getString(c.getColumnIndex("id"));
+            obj.name = c.getString(c.getColumnIndex("name"));
+            obj.address = c.getString(c.getColumnIndex("address"));
+            obj.contact = c.getString(c.getColumnIndex("contact"));
+            obj.latitude = c.getString(c.getColumnIndex("latitude"));
+            obj.longitude = c.getString(c.getColumnIndex("longitude"));
+            obj.rating = c.getString(c.getColumnIndex("rating"));
+
+            list.add(obj);
+        }
+        c.close();
+        return  list;
     }
 
     public ArrayList<Restaurant_SQLite> twokmrestaurant_list()
@@ -131,6 +173,9 @@ public class Databasehelper extends SQLiteOpenHelper {
         return list;
 
     }
+
+
+
     public ArrayList<Restaurant_SQLite> twokmrestaurantname_list(String name)
     {
         String query = "select distinct * from twokmtable where name ="+"'"+name+"'"+ "order by distance";

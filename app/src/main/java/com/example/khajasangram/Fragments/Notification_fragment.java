@@ -453,16 +453,6 @@ public class Notification_fragment extends Fragment {
             img = view1.findViewById(R.id.img_restaurant);
 
 
-           /* namee.add(restaurant_sqLite.name);
-            address.add(restaurant_sqLite.address);
-            id.add(restaurant_sqLite.id);
-            contact.add(restaurant_sqLite.contact);
-            latitude.add(restaurant_sqLite.latitude);
-            longitude.add(restaurant_sqLite.longitude);
-            ddistance.add(restaurant_sqLite.distance);
-            //float f = Float.valueOf(restaurant_sqLite.rating);
-            //rating.add( f);*/
-
             final Double[] rating_sum = {0.0};
             final Double[] rating_sum_final = new Double[1];
             reference = FirebaseDatabase.getInstance().getReference("Rating").child(restaurant_sqLite.id);

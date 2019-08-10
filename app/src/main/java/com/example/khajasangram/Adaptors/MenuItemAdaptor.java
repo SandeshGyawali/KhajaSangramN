@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.khajasangram.MenudisplayActivity;
 import com.example.khajasangram.R;
+import com.example.khajasangram.SQLite.Databasehelper;
 import com.example.khajasangram.SubMenuItemAdaptor;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,11 +38,13 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
      DatabaseReference reference;
      String id;
     int submenu_item_index ;
+    int submenu_item_index_first;
     int submenu_item_index1 ;
-    SubMenuItemAdaptor subMenuItemAdaptor;
+    SubMenuItemAdaptor subMenuItemAdaptor, first_adapter;
     DatabaseReference reference1;
     LinearLayout linearLayout;
-
+    int check = 0;
+    Databasehelper db;
 
 
 
@@ -58,7 +61,53 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
     public MenuItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.menu_item_list,parent,false);
+
+            setSubmenuofFirstItem();
+
         return new MenuItemAdaptor.MenuItemViewHolder(view);
+    }
+
+    private void setSubmenuofFirstItem() {
+        DatabaseReference reference;
+
+        submenu_item_index_first =0;
+        submenuitem_list = new ArrayList<>();
+        submenuitem_pricelist = new ArrayList<>();
+
+        reference = FirebaseDatabase.getInstance().getReference("Menu").child(id).child(list.get(0));
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //  Toast.makeText(context,"count= "+dataSnapshot.getChildrenCount(),Toast.LENGTH_SHORT).show();
+                for(int i = 0; i < dataSnapshot.getChildrenCount(); i++) {
+                    String name = dataSnapshot.child("name" + submenu_item_index_first).child("name").getValue(String.class);
+                    String price = dataSnapshot.child("name" + submenu_item_index_first).child("price").getValue(String.class);
+
+                    submenu_item_index_first++;
+
+                    submenuitem_list.add(name);
+                    submenuitem_pricelist.add(price);
+                    first_adapter = new SubMenuItemAdaptor(context, submenuitem_list, submenuitem_pricelist);
+
+                    recyclerView.setAdapter(first_adapter);
+
+                    recyclerView.setHasFixedSize(true);
+
+                    LinearLayoutManager mLayoutManager = new LinearLayoutManager(context);
+                    recyclerView.setLayoutManager(mLayoutManager);
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -85,8 +134,10 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Toast.makeText(context,"count item= "+dataSnapshot.getChildrenCount(),Toast.LENGTH_SHORT).show();
 
-                            for (int i = 0; i < dataSnapshot.getChildrenCount(); i++) {
+
+                        for (int i = 0; i < dataSnapshot.getChildrenCount(); i++) {
                                 String subitem = dataSnapshot.child("name" + submenu_item_index).child("name").getValue(String.class);
                                 String subitem_price = dataSnapshot.child("name" + submenu_item_index).child("price").getValue(String.class);
 

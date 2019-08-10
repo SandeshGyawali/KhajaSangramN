@@ -15,7 +15,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.khajasangram.Classes.DataToSQLite;
 import com.example.khajasangram.Classes.RestaurantClass;
+import com.example.khajasangram.Classes.Restaurant_SQLite;
 import com.example.khajasangram.R;
 import com.example.khajasangram.RestaurantDetails;
 import com.google.firebase.database.DataSnapshot;
@@ -40,10 +42,16 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
     ArrayList<String> address = new ArrayList<>();
     ArrayList<String> contact = new ArrayList<>();
     ArrayList<String> id = new ArrayList<>();
+    ArrayList<String> latitude = new ArrayList<>();
+    ArrayList<String> longitude = new ArrayList<>();
+    ArrayList<String> rating = new ArrayList<>();
     ArrayList<String> value = new ArrayList<>();
-    DatabaseReference review, reference_img;
+    DatabaseReference review, reference_img, reference;
+    DataToSQLite obj;
 
-    public RestaurantAdaptor(RecyclerView recyclerView, Context context, ArrayList<String> name, ArrayList<String> address,ArrayList<String> contact, ArrayList<String> id,ArrayList<String> distance ) {
+
+
+    public RestaurantAdaptor(RecyclerView recyclerView, Context context, ArrayList<String> name, ArrayList<String> address,ArrayList<String> contact, ArrayList<String> id,ArrayList<String> distance, ArrayList<String> latitude, ArrayList<String> longitude ) {
         this.recyclerView = recyclerView;
         this.context = context;
         this.name = name;
@@ -51,7 +59,11 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
         this.id = id;
         this.contact = contact;
         this.distance = distance;
+        this.latitude = latitude;
+        this.longitude = longitude;
         //this.created_date = created_date;
+
+        int j=0;
 
         restaurantDetails = new RestaurantDetails();
     }
@@ -78,11 +90,14 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
                     Double stars = Double.parseDouble(snapshot.child("stars").getValue(String.class));
                     rating_sum[0] = rating_sum[0] + stars;
                 }
                 rating_sum_final[0] = rating_sum[0]/dataSnapshot.getChildrenCount();
                 Float f = rating_sum_final[0].floatValue();
+                rating.add(position,String.valueOf(f));
+                //Toast.makeText(context, "value= "+rating, Toast.LENGTH_SHORT).show();
                 holder.ratingBar.setRating(f);
                 }
 
@@ -163,5 +178,8 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
             imageView = itemView.findViewById(R.id.img_restaurant);
 
         }
+
+
     }
+
 }
