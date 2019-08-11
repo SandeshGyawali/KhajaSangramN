@@ -13,11 +13,12 @@
         <LinearLayout
             android:visibility="invisible"
             android:id="@+id/search_by_name_place"
-            android:background="@color/red"
+            android:background="@color/background"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="36dp">
             <EditText
+                android:gravity="center"
                 android:hint="Enter the Keyword..."
                 android:id="@+id/search_txt"
                 android:layout_marginTop="6dp"
@@ -32,7 +33,7 @@
                 android:layout_gravity="center"
                 android:id="@+id/search_icon"
                 android:background="@drawable/ic_search_black_24dp"
-                android:layout_width="wrap_content"
+                android:layout_width="28dp"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>

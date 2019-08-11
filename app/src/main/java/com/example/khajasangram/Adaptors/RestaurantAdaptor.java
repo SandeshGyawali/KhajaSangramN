@@ -140,6 +140,7 @@ public class RestaurantAdaptor extends RecyclerView.Adapter<RestaurantAdaptor.Re
                   //      Intent(view.getContext(),RestaurantDetails.class));
                 extras.putString("id",id.get(position));
                 extras.putString("contact",contact.get(position));
+                extras.putString("name",name.get(position));
                 i.putExtras(extras);
                 //i.putExtra("id",id.get(position));
                 view.getContext().startActivity(i);

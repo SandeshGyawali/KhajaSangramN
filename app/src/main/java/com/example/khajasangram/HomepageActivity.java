@@ -156,11 +156,16 @@ public class HomepageActivity extends AppCompatActivity implements BottomNavigat
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
 
-        Databasehelper databasehelper = new Databasehelper(this);
-        databasehelper.delete_content();
-        dialogbuilder(HomepageActivity.this);
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+            loadFragment(new Try_fragment());
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+
     }
 
     public void dialogbuilder(Context c)

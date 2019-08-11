@@ -27,7 +27,7 @@ public class MenudisplayActivity extends AppCompatActivity {
     ArrayList<String> namelist;
 
     DatabaseReference reference;
-    String intent_id;
+    String intent_id, title;
     int foodlist_index = 0;
     MenuItemAdaptor adaptor;
     Toolbar toolbar;
@@ -40,6 +40,7 @@ public class MenudisplayActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         intent_id = extras.getString("id");
+        title = extras.getString("title");
 
         namelist = new ArrayList<>();
 
@@ -52,6 +53,7 @@ public class MenudisplayActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        setTitle(title);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

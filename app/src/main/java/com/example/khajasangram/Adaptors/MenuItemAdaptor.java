@@ -45,6 +45,7 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
     LinearLayout linearLayout;
     int check = 0;
     Databasehelper db;
+    LinearLayout layout;
 
 
 
@@ -62,7 +63,10 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.menu_item_list,parent,false);
 
+        if(check == 0) {
             setSubmenuofFirstItem();
+            check++;
+        }
 
         return new MenuItemAdaptor.MenuItemViewHolder(view);
     }
@@ -71,8 +75,8 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
         DatabaseReference reference;
 
         submenu_item_index_first =0;
-        submenuitem_list = new ArrayList<>();
-        submenuitem_pricelist = new ArrayList<>();
+        submenuitem_list1 = new ArrayList<>();
+        submenuitem_pricelist1 = new ArrayList<>();
 
         reference = FirebaseDatabase.getInstance().getReference("Menu").child(id).child(list.get(0));
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -86,9 +90,9 @@ public class MenuItemAdaptor extends RecyclerView.Adapter<MenuItemAdaptor.MenuIt
 
                     submenu_item_index_first++;
 
-                    submenuitem_list.add(name);
-                    submenuitem_pricelist.add(price);
-                    first_adapter = new SubMenuItemAdaptor(context, submenuitem_list, submenuitem_pricelist);
+                    submenuitem_list1.add(name);
+                    submenuitem_pricelist1.add(price);
+                    first_adapter = new SubMenuItemAdaptor(context, submenuitem_list1, submenuitem_pricelist1);
 
                     recyclerView.setAdapter(first_adapter);
 
