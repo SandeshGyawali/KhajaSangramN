@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity implements LocationUtil.Loca
         oatscafe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this,RestaurantlistActivity.class));
+               // startActivity(new Intent(HomeActivity.this,RestaurantlistActivity.class));
             }
         });
 

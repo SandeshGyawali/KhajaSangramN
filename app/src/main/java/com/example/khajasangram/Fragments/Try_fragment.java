@@ -21,8 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.khajasangram.Adaptors.RestaurantAdaptor;
+import com.example.khajasangram.Classes.DataToSQLite;
 import com.example.khajasangram.R;
 import com.example.khajasangram.SQLite.Databasehelper;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,47 +42,43 @@ public class Try_fragment extends Fragment {
     ArrayList<String> dcontact;
     ArrayList<String> ddistance;
     ArrayList<String> did;
+    ArrayList<String> dlatitude;
+    ArrayList<String> dlongitude;
+
 
     ContentValues contentValues;
 
-    String user_latitude, user_longitude;
+    Databasehelper databasehelper,databasehelper1;
 
-    Databasehelper databasehelper;
 
     RestaurantAdaptor adaptor;
 
+    Double value;
+    FirebaseAuth auth;
+    String user_id;
     Location loc1 = new Location("");
+
+    DataToSQLite obj;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //databasehelper1 = new Databasehelper(getContext());
+        //databasehelper1.delete_content();
+        obj = new DataToSQLite(getContext());
 
         View view = inflater.inflate(R.layout.home_fragment, null);
 
-        preferences = getActivity().getSharedPreferences("uidpreference",0);
 
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(preferences.getString("uid",null));
-
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                user_latitude = dataSnapshot.child("latitude").getValue(String.class);
-                user_longitude = dataSnapshot.child("longitude").getValue(String.class);
-                loc1.setLatitude(Double.valueOf(user_latitude));
-                loc1.setLongitude(Double.valueOf(user_longitude));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
 
         if (!isConnected(getContext())) buildDialog(getContext()).show();
 
         else {
+
+
              databasehelper = new Databasehelper(getContext());
 
             dname = new ArrayList<>();
@@ -88,57 +86,27 @@ public class Try_fragment extends Fragment {
             dcontact = new ArrayList<>();
             ddistance = new ArrayList<>();
             did = new ArrayList<>();
+            dlatitude = new ArrayList<>();
+            dlongitude = new ArrayList<>();
 
-            reference_restaurant = FirebaseDatabase.getInstance().getReference("Restaurants");
-            reference_restaurant.addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+            auth = FirebaseAuth.getInstance();
+            user_id = auth.getCurrentUser().getUid();
+
+            preferences = getActivity().getSharedPreferences("uidpreference",0);
+
+            reference = FirebaseDatabase.getInstance().getReference("Users").child(user_id);
+
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        contentValues = new ContentValues();
-                        String name = snapshot.child("name").getValue(String.class);
-                        String address = snapshot.child("address").getValue(String.class);
-                        String contact = snapshot.child("contact").getValue(String.class);
+                    String user_latitude = dataSnapshot.child("latitude").getValue(String.class);
+                    String user_longitude = dataSnapshot.child("longitude").getValue(String.class);
+                    loc1.setLatitude(Double.valueOf(user_latitude));
+                    loc1.setLongitude(Double.valueOf(user_longitude));
 
-
-                        String id = snapshot.child("id").getValue(String.class);
-                        String lat = snapshot.child("latitude").getValue(String.class);
-
-                        String lng = snapshot.child("longitude").getValue(String.class);
-
-                        dname.add(name);
-
-                        daddress.add(address);
-
-                        dcontact.add(contact);
-
-                        did.add(id);
-
-                        Location loc2 = new Location("");
-                        loc2.setLatitude(Double.valueOf(lat));
-                        loc2.setLongitude(Double.valueOf(lng));
-
-                        float distanceInMeters = loc1.distanceTo(loc2);
-                        float distanceinkm = (distanceInMeters / 1000);
-                        ddistance.add(String.valueOf(distanceinkm));
-
-                        contentValues.put("id", id);
-                        contentValues.put("name", name);
-                        contentValues.put("address", address);
-                        contentValues.put("contact", contact);
-                        contentValues.put("latitude", lat);
-                        contentValues.put("longitude", lng);
-                        contentValues.put("distance", String.valueOf(distanceinkm));
-                        databasehelper.populate_2kmtable(contentValues);
-
-                        adaptor = new RestaurantAdaptor(recyclerView, getContext(), dname, daddress, dcontact, did, ddistance);
-                        recyclerView.setAdapter(adaptor);
-
-                        recyclerView.setHasFixedSize(true);
-                        // use a linear layout manager
-                        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-                        recyclerView.setLayoutManager(mLayoutManager);
-
-                    }
+                    Toast.makeText(getContext(), "lat= "+user_latitude, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -146,8 +114,103 @@ public class Try_fragment extends Fragment {
 
                 }
             });
+
+
+
+            reference_restaurant = FirebaseDatabase.getInstance().getReference("Restaurants");
+            reference_restaurant.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int child_count = (int) dataSnapshot.getChildrenCount();
+
+                    databasehelper1 = new Databasehelper(getContext());
+                    Long db_row = databasehelper1.row_count();
+                    Toast.makeText(getContext(),"row= "+db_row+" count= "+child_count, Toast.LENGTH_SHORT).show();
+
+
+                    if (db_row.intValue() >= child_count || db_row.intValue() == 0) {
+                            Databasehelper db = new Databasehelper(getContext());
+                            db.delete_content();
+
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                            contentValues = new ContentValues();
+                            String name = snapshot.child("name").getValue(String.class);
+                            String address = snapshot.child("address").getValue(String.class);
+                            String contact = snapshot.child("contact").getValue(String.class);
+
+                            String id = snapshot.child("id").getValue(String.class);
+                            String lat = (snapshot.child("latitude").getValue(String.class));
+
+                            String lng = (snapshot.child("longitude").getValue(String.class));
+
+                            //Toast.makeText(getContext(), "rating= " +value, Toast.LENGTH_SHORT).show();
+
+                            dname.add(name);
+
+                            daddress.add(address);
+
+                            dcontact.add(contact);
+
+                            did.add(id);
+
+                            dlatitude.add(lat);
+                            dlongitude.add(lng);
+
+                            Location loc2 = new Location("");
+                            loc2.setLatitude(Double.valueOf(lat));
+                            loc2.setLongitude(Double.valueOf(lng));
+
+                            float distanceInMeters = loc1.distanceTo(loc2);
+                            float distanceinkm = (distanceInMeters / 1000);
+                            ddistance.add(String.valueOf(distanceinkm));
+
+                            contentValues.put("distance", String.valueOf(distanceinkm));
+                            contentValues.put("id", id);
+                            contentValues.put("name", name);
+                            contentValues.put("address", address);
+                            contentValues.put("contact", contact);
+                            contentValues.put("latitude", lat);
+                            contentValues.put("longitude", lng);
+
+
+
+                            databasehelper.populate_2kmtable(contentValues);
+                            //Toast.makeText(getContext(),"final value= "+ final_rating_value[0],Toast.LENGTH_SHORT).show();
+
+                            adaptor = new RestaurantAdaptor(recyclerView, getContext(), dname, daddress, dcontact, did, ddistance, dlatitude, dlongitude);
+                            recyclerView.setAdapter(adaptor);
+
+                            recyclerView.setHasFixedSize(true);
+                            // use a linear layout manager
+                            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                            recyclerView.setLayoutManager(mLayoutManager);
+
+                            //
+                        }
+                    }
+                    //
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            passvalues();
         }
             return view;
+    }
+
+    public void passvalues()
+    {
+        obj.populate_twokmtable(getContext(),did,dname,daddress,dcontact,dlatitude,dlongitude,ddistance);
+    }
+
+    public void set_rating_value()
+    {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Rating");
     }
 
     public boolean isConnected(Context context) {

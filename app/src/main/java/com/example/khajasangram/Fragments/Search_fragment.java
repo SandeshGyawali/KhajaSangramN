@@ -1,177 +1,157 @@
 package com.example.khajasangram.Fragments;
 
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.khajasangram.Adaptors.RestaurantAdaptor;
-import com.example.khajasangram.Classes.Restaurant_SQLite;
+import com.example.khajasangram.Classes.Restaurant_SQLite_comparision;
 import com.example.khajasangram.R;
-import com.example.khajasangram.RestaurantlistActivity;
+import com.example.khajasangram.RestaurantDetails;
 import com.example.khajasangram.SQLite.Databasehelper;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class Search_fragment extends Fragment {
-    RecyclerView recyclerView;
-    LinearLayout linearLayout_2km;
-    Databasehelper databasehelper;
-    RestaurantAdaptor restaurantAdaptor;
-
-    ArrayList<String> name;
+    Databasehelper db;
+    LinearLayout first_layout,compare_criteria_layout, compare_rating,compare_price;
+    LinearLayout container1;
     ArrayList<String> id;
+    ArrayList<String> name;
     ArrayList<String> address;
     ArrayList<String> contact;
     ArrayList<String> latitude;
     ArrayList<String> longitude;
-    ArrayList<String> distance;
-    SeekBar seekBar;
-    TextView seekbartxt;
-    String radius;
-    Button button;
-    Double value;
-    int value1;
-
-
+    ArrayList<String> rating;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        databasehelper = new Databasehelper(getContext());
-        View rootview = inflater.inflate(R.layout.search_fragment, null);
 
-        button = rootview.findViewById(R.id.search_btn);
+        db = new Databasehelper(getContext());
+        View view = inflater.inflate(R.layout.search_fragment,null);
 
-        seekBar = rootview.findViewById(R.id.seekbar);
-        seekbartxt = rootview.findViewById(R.id.seekbartext);
+        first_layout = view.findViewById(R.id.first_layout);
+        compare_criteria_layout = view.findViewById(R.id.compare_criteria_layout);
+        compare_rating = view.findViewById(R.id.compare_rating);
+        compare_price = view.findViewById(R.id.compare_price);
+        container1 = view.findViewById(R.id.container1);
 
-        seekBar.setProgress(200); //suru ko default value
-        seekBar.incrementProgressBy(100); //eti le increase hunxa
-        seekBar.setMax(8000); //maximum value
+        first_layout.setVisibility(View.VISIBLE);
+        compare_criteria_layout.setVisibility(View.INVISIBLE);
 
-        radius = "200";
-
-        seekbartxt.setText("Radius: "+radius+"m");
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                radius = String.valueOf(i);
-                String radius1= String.valueOf(i/1000);
-                value = Double.valueOf(radius1);
-                value1 = i/100;
-                seekbartxt.setText("Radius: "+radius+"m");
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        button.setOnClickListener(new View.OnClickListener() {
-
+        first_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                compare_criteria_layout.setVisibility(View.VISIBLE);
 
+                compare_rating.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        compare_rating.setBackgroundResource(R.drawable.menu_item_pressed);
+                        compare_price.setBackgroundResource(R.drawable.rec_box_rounded_corner);
 
-                recyclerView = rootview.findViewById(R.id.recyclerview);
-                name = new ArrayList<>();
-                id = new ArrayList<>();
-                address = new ArrayList<>();
-                contact = new ArrayList<>();
-                latitude = new ArrayList<>();
-                longitude = new ArrayList<>();
-                distance = new ArrayList<>();
+                        container1.removeAllViews();
+                        display_restaurant_rating();
 
-
-                //value is getting rounded-off to the upper limit always i.e 1.88 is stored as 1
-                ArrayList<Restaurant_SQLite> info = databasehelper.twokmrestaurant_list(value1);
-
-                Restaurant_SQLite restaurant_sqLite;
-                for(int i=0;i<info.size();i++)
-                {
-                    restaurant_sqLite = info.get(i);
-
-                    name.add(restaurant_sqLite.name);
-                    address.add(restaurant_sqLite.address);
-                    id.add(restaurant_sqLite.id);
-                    contact.add(restaurant_sqLite.contact);
-                    latitude.add(restaurant_sqLite.latitude);
-                    longitude.add(restaurant_sqLite.longitude);
-                    distance.add(restaurant_sqLite.distance);
-                }
-                restaurantAdaptor = new RestaurantAdaptor(recyclerView,getContext(),name, address,contact,id,distance);
-                recyclerView.setAdapter(restaurantAdaptor);
-
-                recyclerView.setHasFixedSize(true);
-
-                LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-                recyclerView.setLayoutManager(mLayoutManager);
+                    }
+                });
             }
         });
 
-        linearLayout_2km = rootview.findViewById(R.id.twokm);
-  /*      recyclerView = rootview.findViewById(R.id.recyclerview);
-        //LinearLayout linearLayout = rootview.findViewById(R.id.container);
-        name = new ArrayList<>();
+        return view;
+    }
+
+    public void display_restaurant_rating()
+    {
         id = new ArrayList<>();
+        name = new ArrayList<>();
         address = new ArrayList<>();
         contact = new ArrayList<>();
         latitude = new ArrayList<>();
         longitude = new ArrayList<>();
-        distance = new ArrayList<>();
+        rating = new ArrayList<>();
 
-        ArrayList<Restaurant_SQLite> info = databasehelper.twokmrestaurant_list();
-        linearLayout_2km.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //linearLayout.removeAllViews();
+        DatabaseReference reference;
+        container1.removeAllViews();
 
-                Restaurant_SQLite restaurant_sqLite;
-                for(int i=0;i<info.size();i++)
-                {
-                    restaurant_sqLite = info.get(i);
+        ArrayList<Restaurant_SQLite_comparision> list = db.comparision_rating();
+        Restaurant_SQLite_comparision obj ;
 
-                    name.add(restaurant_sqLite.name);
-                    address.add(restaurant_sqLite.address);
-                    id.add(restaurant_sqLite.id);
-                    contact.add(restaurant_sqLite.contact);
-                    latitude.add(restaurant_sqLite.latitude);
-                    longitude.add(restaurant_sqLite.longitude);
-                    distance.add(restaurant_sqLite.distance);
+        for(int i=0 ; i< list.size() ; i++)
+        {
+            obj = list.get(i);
+            View view1 = LayoutInflater.from(getContext()).inflate(R.layout.restaurant_layout, null);
+
+            LinearLayout.LayoutParams value = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    value.setMargins(10,10,10,10);
+            view1.setLayoutParams(value);
+            //view1.setLayoutParams(10,10,10,10);
+            TextView res_name,res_address,res_contact, distance;
+            RatingBar ratingBar;
+            ImageView img;
+
+            ratingBar = view1.findViewById(R.id.restaurant_rating_bar);
+            res_name = view1.findViewById(R.id.res_name);
+            res_address = view1.findViewById(R.id.res_address);
+            res_contact = view1.findViewById(R.id.res_contact);
+            distance = view1.findViewById(R.id.distance);
+            img = view1.findViewById(R.id.img_restaurant);
+
+            reference = FirebaseDatabase.getInstance().getReference("Images").child(obj.id);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String imgpath = dataSnapshot.child("imgpath").getValue(String.class);
+                    Picasso.get().load(imgpath).into(img);
                 }
-                restaurantAdaptor = new RestaurantAdaptor(recyclerView,getContext(),name, address,contact,id,distance);
-                recyclerView.setAdapter(restaurantAdaptor);
 
-                recyclerView.setHasFixedSize(true);
-                // use a linear layout manager
-                LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-                recyclerView.setLayoutManager(mLayoutManager);
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });*/
+                }
+            });
 
+            //Toast.makeText(getContext(), "name "+obj.name, Toast.LENGTH_SHORT).show();
+            res_name.setText(obj.name);
+            res_address.setText(obj.address);
+            res_contact.setText(obj.contact);
+            ratingBar.setRating(Float.valueOf(obj.rating));
 
+            Restaurant_SQLite_comparision finalObj = obj;
+            view1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(getContext(), RestaurantDetails.class);
+                    Bundle extras = new Bundle();
+                    //view.getContext().startActivity(new
+                    //      Intent(view.getContext(),RestaurantDetails.class));
+                    extras.putString("id", finalObj.id);
+                    extras.putString("contact", finalObj.contact);
+                    i.putExtras(extras);
+                    //i.putExtra("id",id.get(position));
+                    view.getContext().startActivity(i);
+                }
+            });
+           container1.addView(view1);
+        }
 
-        return rootview;
     }
 }

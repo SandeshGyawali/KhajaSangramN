@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import com.example.khajasangram.Classes.UserdetailsClass;
 import com.example.khajasangram.Fragments.Dashboard_fragment;
-import com.example.khajasangram.Fragments.Home_fragment;
+//import com.example.khajasangram.Fragments.Home_fragment;
 import com.example.khajasangram.Fragments.Notification_fragment;
 import com.example.khajasangram.Fragments.Search_fragment;
 import com.example.khajasangram.Fragments.Try_fragment;
@@ -41,7 +41,7 @@ public class HomepageActivity extends AppCompatActivity implements BottomNavigat
     Boolean loc_checker= false;
     SharedPreferences uidpreference;
     SharedPreferences.Editor editor1;
-
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,7 @@ public class HomepageActivity extends AppCompatActivity implements BottomNavigat
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(this);
+
 
         mLocationUtil = new LocationUtil(HomepageActivity.this);
         mLocationUtil.fetchApproximateLocation(this);
@@ -155,11 +156,16 @@ public class HomepageActivity extends AppCompatActivity implements BottomNavigat
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
 
-        Databasehelper databasehelper = new Databasehelper(this);
-        databasehelper.drop_twokmtable();
-        dialogbuilder(HomepageActivity.this);
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+            loadFragment(new Try_fragment());
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+
     }
 
     public void dialogbuilder(Context c)

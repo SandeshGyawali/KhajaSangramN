@@ -56,6 +56,8 @@ public class RestaurantDetails extends AppCompatActivity {
     RecyclerView recyclerView;
 
     ReviewAdaptor reviewAdaptor;
+    String title;
+    String intent_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,9 @@ public class RestaurantDetails extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         intent_id = extras.getString("id");
         intent_contact = extras.getString("contact");
+        intent_title = extras.getString("name");
 
+        setTitle(intent_title);
 
         DatabaseReference avg_rating_reference;
         final Double[] d = {0.0};
@@ -245,6 +249,7 @@ public class RestaurantDetails extends AppCompatActivity {
                  Bundle extras = new Bundle();
 
                  extras.putString("id",intent_id);
+                 extras.putString("title",title);
                  i.putExtras(extras);
                  startActivity(i);
              }
@@ -304,6 +309,7 @@ public class RestaurantDetails extends AppCompatActivity {
                     {
                         //Toast.makeText(getApplicationContext(), "id= "+id, Toast.LENGTH_SHORT).show();
                         String dname = snapshot.child("name").getValue(String.class);
+                        title = dname;
                         String daddress = snapshot.child("address").getValue(String.class);
                         res_lat = snapshot.child("latitude").getValue(String.class);
                         res_lon = snapshot.child("longitude").getValue(String.class);
@@ -327,11 +333,14 @@ public class RestaurantDetails extends AppCompatActivity {
 
     public void setrestaurant_picture()
     {
-        reference_img = FirebaseDatabase.getInstance().getReference("Images");
+        reference_img = FirebaseDatabase.getInstance().getReference("Images").child(intent_id);
         reference_img.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                String imgpath = dataSnapshot.child("imgpath").getValue(String.class);
+                Picasso.get().load(imgpath).into(imgview);
+                get_restaurant_description();
+               /* for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String id = snapshot.child("rid").getValue(String.class);
 
                     if(intent_id.equals(id)) {
@@ -342,7 +351,7 @@ public class RestaurantDetails extends AppCompatActivity {
                         get_restaurant_description();
                         break;
                     }
-                }
+                }*/
             }
 
             @Override
